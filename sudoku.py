@@ -9,16 +9,16 @@ LADO = 60
 WIDTH = 40 + LADO * 9
 HEIGHT = 40 + LADO * 9
 
-class Facil:
+class readGame:
 
-    def __init__(self):
+    def __init__(self, difficulty):
         self.jogos_disponiveis = []
-        self.cria_jogos()
-
-    def cria_jogos(self):
+        self.cria_jogos(difficulty)
+    
+    def cria_jogos(self, difficulty):
         old_game = 0
         
-        arq = open(gameDir + '\easy.csv')
+        arq = open(gameDir + '\\' + difficulty + '.csv')
         for linha in arq:
             linha = linha.split(';')
             if linha[0] != 'GAME':
@@ -44,90 +44,6 @@ class Facil:
                     temp_list = []
 
         arq.close()
-    
-        
-
-    def seleciona_jogo(self):
-        return self.jogos_disponiveis[randint(0, len(self.jogos_disponiveis) - 1)]
-
-class Medio:
-
-    def __init__(self):
-        self.jogos_disponiveis = []
-        self.cria_jogos()
-
-    def cria_jogos(self):
-        old_game = 0
-
-        arq = open(gameDir + '\medium.csv')
-        for linha in arq:
-            linha = linha.split(';')
-            if linha[0] != 'GAME':
-                jogo[int(linha[2])][int(linha[3])][0] = int(linha[1])
-                jogo[int(linha[2])][int(linha[3])][1] = 'TRUE'
-                jogo[int(linha[2])][int(linha[3])][2] = 'blue'
-            else:
-                try:
-                    self.jogos_disponiveis.append(jogo)
-                except: pass
-                
-                temp_list = []
-                temp2_list = []
-                jogo = []
-                for i in range(9):
-                    for j in range(9):
-                        temp2_list.append(0)
-                        temp2_list.append('False')
-                        temp2_list.append('red')
-                        temp_list.append(temp2_list)
-                        temp2_list = []
-                    jogo.append(temp_list)
-                    temp_list = []
-
-        arq.close()
-    
-        
-
-    def seleciona_jogo(self):
-        return self.jogos_disponiveis[randint(0, len(self.jogos_disponiveis) - 1)]
-
-class Dificil:
-
-    def __init__(self):
-        self.jogos_disponiveis = []
-        self.cria_jogos()
-
-    def cria_jogos(self):
-        old_game = 0
-
-        arq = open(gameDir + '\hard.csv')
-        for linha in arq:
-            linha = linha.split(';')
-            if linha[0] != 'GAME':
-                jogo[int(linha[2])][int(linha[3])][0] = int(linha[1])
-                jogo[int(linha[2])][int(linha[3])][1] = 'TRUE'
-                jogo[int(linha[2])][int(linha[3])][2] = 'blue'
-            else:
-                try:
-                    self.jogos_disponiveis.append(jogo)
-                except: pass
-                
-                temp_list = []
-                temp2_list = []
-                jogo = []
-                for i in range(9):
-                    for j in range(9):
-                        temp2_list.append(0)
-                        temp2_list.append('False')
-                        temp2_list.append('red')
-                        temp_list.append(temp2_list)
-                        temp2_list = []
-                    jogo.append(temp_list)
-                    temp_list = []
-
-        arq.close()
-    
-        
 
     def seleciona_jogo(self):
         return self.jogos_disponiveis[randint(0, len(self.jogos_disponiveis) - 1)]
@@ -135,7 +51,6 @@ class Dificil:
 def solver():
     messagebox.showinfo('Sudoku', 'Not ready yet')
         
-
 def apertou(event):
     try:
         numero.set(int(event.char))
@@ -166,15 +81,8 @@ def start():
     Solver_Button = Button(frame, command = solver, text = "Solve")
     Solver_Button.grid(row = 0, column = 2, padx = 5, pady = 5)
 
-    if dificuldade.get() == 'facil':
-        facil = Facil()
-        jogo = facil.seleciona_jogo()
-    elif dificuldade.get() == 'medio':
-        medio = Medio()
-        jogo = medio.seleciona_jogo()
-    elif dificuldade.get() == 'dificil':
-        dificil = Dificil()
-        jogo = dificil.seleciona_jogo()
+    difficulty = readGame(dificuldade.get())
+    jogo = difficulty.seleciona_jogo()
 
     constroi_jogo(0)
     
@@ -238,7 +146,6 @@ def verifica_jogo():
                         elif ponto == 2:
                             check_var = False
                         
-
 def faz_verificacao(i,j,valor):
     if i < 0 or i > 8 or j < 0 or j > 8:
         return 2
@@ -260,10 +167,6 @@ def verifica_fim():
         canvas.delete(ALL)
         canvas.create_text(WIDTH/2, HEIGHT/2, text='Congratulations, you completed the game', anchor = N)
             
-        
-
-    
-
 def constroi_jogo(inicio):
     global canvas
 
@@ -277,7 +180,6 @@ def constroi_jogo(inicio):
     else:
         verifica_jogo()
     
-
     for i in range(9):
         for j in range(9):
             if jogo[i][j][1] == 'TRUE':
@@ -288,8 +190,6 @@ def constroi_jogo(inicio):
                 if jogo[i][j][0] != 0:
                     canvas.create_text(20 + LADO * j + LADO/2, 20 + LADO * i + LADO/2, text=jogo[i][j][0], font=('Purisa', 16), fill=jogo[i][j][2], tag = (i, j, jogo[i][j][0], 'NFIXO'))
                     
-                
-
     for i in range(3):
         for j in range(3):
             canvas.create_rectangle(20 + LADO * (i * 3), 20 + LADO * (j * 3), 20 + LADO * ((i + 1) * 3), 20 + LADO * ((j + 1) * 3), width = 3)
@@ -303,7 +203,6 @@ def botao():
         root2.destroy()
         start()
     
-
 def abrir():
     global root2, dificuldade
     root2 = Tk()
@@ -316,9 +215,9 @@ def abrir():
     Label(label_frame, text = 'Choose the difficulty').grid(row = 0, column = 0, padx = 5, pady = 5)
 
     dificuldade = StringVar()
-    Radiobutton(label_frame, text = 'Easy', variable = dificuldade, value = 'facil', indicatoron = 0).grid(row = 1, column = 0, padx = 5, pady = 5)
-    Radiobutton(label_frame, text = 'Medium', variable = dificuldade, value = 'medio', indicatoron = 0).grid(row = 2, column = 0, padx = 5, pady = 5)
-    Radiobutton(label_frame, text = 'Hard', variable = dificuldade, value = 'dificil', indicatoron = 0).grid(row = 3, column = 0, padx = 5, pady = 5)
+    Radiobutton(label_frame, text = 'Easy', variable = dificuldade, value = 'easy', indicatoron = 0).grid(row = 1, column = 0, padx = 5, pady = 5)
+    Radiobutton(label_frame, text = 'Medium', variable = dificuldade, value = 'medium', indicatoron = 0).grid(row = 2, column = 0, padx = 5, pady = 5)
+    Radiobutton(label_frame, text = 'Hard', variable = dificuldade, value = 'hard', indicatoron = 0).grid(row = 3, column = 0, padx = 5, pady = 5)
 
     Button(label_frame, text = 'Start', command = botao).grid(row = 4, column = 0, padx = 5, pady = 5)
 
