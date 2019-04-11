@@ -2,6 +2,7 @@
 from tkinter import *
 from random import *
 from tkinter import messagebox
+import os
 
 LADO = 60
 
@@ -16,8 +17,8 @@ class Facil:
 
     def cria_jogos(self):
         old_game = 0
-
-        arq = open('easy.csv')
+        
+        arq = open(gameDir + '\easy.csv')
         for linha in arq:
             linha = linha.split(';')
             if linha[0] != 'GAME':
@@ -58,7 +59,7 @@ class Medio:
     def cria_jogos(self):
         old_game = 0
 
-        arq = open('medium.csv')
+        arq = open(gameDir + '\medium.csv')
         for linha in arq:
             linha = linha.split(';')
             if linha[0] != 'GAME':
@@ -99,7 +100,7 @@ class Dificil:
     def cria_jogos(self):
         old_game = 0
 
-        arq = open('hard.csv')
+        arq = open(gameDir + '\hard.csv')
         for linha in arq:
             linha = linha.split(';')
             if linha[0] != 'GAME':
@@ -132,30 +133,14 @@ class Dificil:
         return self.jogos_disponiveis[randint(0, len(self.jogos_disponiveis) - 1)]
 
 def solver():
-    print ('Not ready yet')
+    messagebox.showinfo('Sudoku', 'Not ready yet')
         
 
 def apertou(event):
-    if event.char == '0':
-        numero.set(0)
-    elif event.char == '1':
-        numero.set(1)
-    elif event.char == '2':
-        numero.set(2)
-    elif event.char == '3':
-        numero.set(3)
-    elif event.char == '4':
-        numero.set(4)
-    elif event.char == '5':
-        numero.set(5)
-    elif event.char == '6':
-        numero.set(6)
-    elif event.char == '7':
-        numero.set(7)
-    elif event.char == '8':
-        numero.set(8)
-    elif event.char == '9':
-        numero.set(9)
+    try:
+        numero.set(int(event.char))
+    except:
+        pass
 
 def click1(event):
     item = canvas.find_overlapping(event.x, event.y, event.x, event.y)
@@ -339,4 +324,5 @@ def abrir():
 
     root2.mainloop()
 
+gameDir = os.path.dirname(os.path.realpath(__file__))
 abrir()
