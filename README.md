@@ -11,4 +11,4 @@ Press the number you want to insert in a box and notice that this number will ch
 
 If the number you insert becomes blue then it's ok, you can insert that number there, but if the number you insert becomes red then you should change it because there is already another box with that same number on the row or column of the box you chose.
 
-The solve button does not work yet. The ideia is to just press it and it will solve the game by itself. I'll try to make a recursion function that will find the solution. Or maybe, Machine Learning, I don't know...I don't think it's necessary, would do it just for the lolz.
+Press the solve button so it can be solved by backtrack.
