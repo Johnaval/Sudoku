@@ -3,6 +3,7 @@ from tkinter import *
 from random import *
 from tkinter import messagebox
 import os
+import time
 
 LADO = 60
 
@@ -42,16 +43,37 @@ class readGame:
                         temp2_list = []
                     jogo.append(temp_list)
                     temp_list = []
-
         arq.close()
 
     def seleciona_jogo(self):
         return self.jogos_disponiveis[randint(0, len(self.jogos_disponiveis) - 1)]
 
 def solver():
-    messagebox.showinfo('Sudoku', 'Not ready yet')
+    find = find_empty()
+    if not find:
+        return True
+    else:
+        row, col = find
+    for i in range(1,10):
+        jogo[row][col][0] = i
+        draw(1)
+        #time.sleep(0.01)
+        canvas.update()
+        if jogo[row][col][2] == 'blue':
+            if solver():
+                return True
+    jogo[row][col][0] = 0
+    draw(1)
+    return False    
         
-def apertou(event):
+def find_empty():
+    for i in range(9):
+        for j in range(9):
+            if jogo[i][j][0] == 0:
+                return(i,j)
+    return None     
+
+def chose_number(event):
     try:
         numero.set(int(event.char))
     except:
@@ -63,7 +85,7 @@ def click1(event):
 
     if tags[3] == 'NFIXO':
         jogo[int(tags[0])][int(tags[1])][0] = numero.get()
-        constroi_jogo(1)
+        draw(1)
 
 def start():
     global numero, root, jogo
@@ -84,101 +106,32 @@ def start():
     difficulty = readGame(dificuldade.get())
     jogo = difficulty.seleciona_jogo()
 
-    constroi_jogo(0)
+    draw(0)
     
-    root.bind('<KeyPress>', apertou)
+    root.bind('<KeyPress>', chose_number)
     canvas.bind('<Button 1>', click1)
 
     root.mainloop()
 
-def verifica_jogo():
+def check_game():
     for i in range(9):
         for j in range(9):
-            check_var = True
-            direction = '-x'
-            linha = i
-            coluna = j
-            local = jogo[i][j]
-            valor = local[0]
-            if local[1] == 'False' and local[0] != 0:
-                while check_var == True:
-                    if direction == '-x':
-                        coluna -= 1
-                        ponto = faz_verificacao(linha, coluna, valor)
-                        if ponto == 1:
-                            jogo[i][j][2] = 'red'
-                            check_var = False
-                        elif ponto == 0:
-                            jogo[i][j][2] = 'blue'
-                        elif ponto == 2:
-                            coluna = j
-                            direction = '+x'
-                    elif direction == '+x':
-                        coluna += 1
-                        ponto = faz_verificacao(linha, coluna, valor)
-                        if ponto == 1:
-                            jogo[i][j][2] = 'red'
-                            check_var = False
-                        elif ponto == 0:
-                            jogo[i][j][2] = 'blue'
-                        elif ponto == 2:
-                            coluna = j
-                            direction = '-y'
-                    elif direction == '-y':
-                        linha -= 1
-                        ponto = faz_verificacao(linha, coluna, valor)
-                        if ponto == 1:
-                            jogo[i][j][2] = 'red'
-                            check_var = False
-                        elif ponto == 0:
-                            jogo[i][j][2] = 'blue'
-                        elif ponto == 2:
-                            linha = i
-                            direction = '+y'
-                    elif direction == '+y':
-                        linha += 1
-                        ponto = faz_verificacao(linha, coluna, valor)
-                        if ponto == 1:
-                            jogo[i][j][2] = 'red'
-                            check_var = False
-                        elif ponto == 0:
-                            jogo[i][j][2] = 'blue'
-                        elif ponto == 2:
-                            check_var = False
-                        
-def faz_verificacao(i,j,valor):
-    if i < 0 or i > 8 or j < 0 or j > 8:
-        return 2
-    else:
-        if jogo[i][j][0] != valor:
-            return 0
-        elif jogo[i][j][0] == valor:
-            return 1
-
-def verifica_fim():
-    check_var = True
-
-    for i in range(9):
-        for j in range(9):
-            if jogo[i][j][2] == 'red':
-                check_var = False
-
-    if check_var == True:
-        canvas.delete(ALL)
-        canvas.create_text(WIDTH/2, HEIGHT/2, text='Congratulations, you completed the game', anchor = N)
-            
-def constroi_jogo(inicio):
+            if jogo[i][j][1] == 'False' and jogo[i][j][0] > 0:
+                jogo[i][j][2] = 'blue'
+                for k in range(1, 9):
+                    if jogo[i][j][0] == jogo[i-k][j][0] or jogo[i][j][0] == jogo[i][j-k][0]:
+                        jogo[i][j][2] = 'red'
+                        break
+                         
+def draw(inicio):
     global canvas
-
-    try:
-        canvas.delete(ALL)
-    except: pass
 
     if inicio == 0:
         canvas = Canvas(root, bg='white', width = WIDTH, height = HEIGHT, bd = 2, relief = RIDGE)
         canvas.grid(row = 1, column =0)
     else:
-        verifica_jogo()
+        check_game()
+        canvas.delete(ALL)
     
     for i in range(9):
         for j in range(9):
@@ -194,16 +147,14 @@ def constroi_jogo(inicio):
         for j in range(3):
             canvas.create_rectangle(20 + LADO * (i * 3), 20 + LADO * (j * 3), 20 + LADO * ((i + 1) * 3), 20 + LADO * ((j + 1) * 3), width = 3)
 
-    verifica_fim()
-
-def botao():
+def button():
     if dificuldade.get() == '':
         messagebox.showerror('Sudoku', 'Choose the difficulty')
     else:
         root2.destroy()
         start()
     
-def abrir():
+def begin():
     global root2, dificuldade
     root2 = Tk()
     root2.title('Sudoku')
@@ -219,9 +170,9 @@ def abrir():
     Radiobutton(label_frame, text = 'Medium', variable = dificuldade, value = 'medium', indicatoron = 0).grid(row = 2, column = 0, padx = 5, pady = 5)
     Radiobutton(label_frame, text = 'Hard', variable = dificuldade, value = 'hard', indicatoron = 0).grid(row = 3, column = 0, padx = 5, pady = 5)
 
-    Button(label_frame, text = 'Start', command = botao).grid(row = 4, column = 0, padx = 5, pady = 5)
+    Button(label_frame, text = 'Start', command = button).grid(row = 4, column = 0, padx = 5, pady = 5)
 
     root2.mainloop()
 
 gameDir = os.path.dirname(os.path.realpath(__file__))
-abrir()
+begin()
