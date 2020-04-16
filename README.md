@@ -1,5 +1,5 @@
 # Sudoku
-Just a small Sudoku game in Python to test how Github works
+Just a small Sudoku game in Python
 
 In case you don't know, the idea of the this game is to complete all boxes with unique numbers and every row and column of the game will not have repeated numbers.
 
